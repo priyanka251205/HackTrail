@@ -2,73 +2,86 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8" />
-  <title>Job Shortlister</title>
-  <link rel="preconnect" href="https://fonts.googleapis.com">
-  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link
-    href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&display=swap"
-    rel="stylesheet">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>HackTrail - AI Job Shortlister</title>
+  <meta name="description" content="AI-Powered Resume Shortlisting System">
   <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
 </head>
 <body>
-  <div class="container panel">
-    <h2>Smart Job Shortlister</h2>
-    <form action="/" method="post" enctype="multipart/form-data">
-      <label for="job_description">Job Description:</label>
-      <textarea id="job_description" name="job_description" rows="6" required></textarea>
-    
-      <label for="cv_files">Upload CVs (PDF only):</label>
-      <input id="cv_files" name="cv_files" type="file" accept=".pdf" multiple required>
-    
-      <label for="candidate_count">Number of Candidates:</label>
-      <input id="candidate_count" name="candidate_count" type="number" min="1" disabled required>
-    
-      <input type="submit" value="Shortlist Now">
-    
-      <script>
-        const fileInput = document.getElementById("cv_files");
-        const countInput = document.getElementById("candidate_count");
-    
-        fileInput.addEventListener("change", function () {
-          const fileCount = fileInput.files.length;
-          countInput.max = fileCount;
-          countInput.min = 1;
-          countInput.disabled = fileCount === 0;
-    
-          // Reset invalid state
-          countInput.setCustomValidity("");
-    
-          countInput.addEventListener("input", function () {
-            if (parseInt(countInput.value) > fileCount) {
-              countInput.setCustomValidity("You cannot shortlist more than uploaded CVs.");
-            } else {
-              countInput.setCustomValidity(""); // Valid
-            }
+  <div class="container">
+    <div class="panel">
+      <h2>✨ HackTrail AI Shortlister</h2>
+      <form action="/" method="post" enctype="multipart/form-data">
+        
+        <div class="form-group">
+          <label for="job_description">Job Description</label>
+          <textarea id="job_description" name="job_description" rows="5" placeholder="Paste the job requirements and description here..." required></textarea>
+        </div>
+      
+        <div class="form-group">
+          <label for="cv_files">Upload CVs (PDF)</label>
+          <input id="cv_files" name="cv_files" type="file" accept=".pdf" multiple required>
+        </div>
+      
+        <div class="form-group">
+          <label for="candidate_count">Number of Top Candidates to Email</label>
+          <input id="candidate_count" name="candidate_count" type="number" min="1" placeholder="e.g. 5" disabled required>
+        </div>
+      
+        <input type="submit" value="🚀 Analyze & Shortlist Candidates">
+      
+        <script>
+          const fileInput = document.getElementById("cv_files");
+          const countInput = document.getElementById("candidate_count");
+      
+          fileInput.addEventListener("change", function () {
+            const fileCount = fileInput.files.length;
+            countInput.max = fileCount;
+            countInput.min = 1;
+            countInput.disabled = fileCount === 0;
+            countInput.setCustomValidity("");
+      
+            countInput.addEventListener("input", function () {
+              if (parseInt(countInput.value) > fileCount) {
+                countInput.setCustomValidity("You cannot shortlist more candidates than uploaded CVs.");
+              } else {
+                countInput.setCustomValidity(""); 
+              }
+            });
           });
-        });
-      </script>
-    </form>
-  </div>
-
-  {% if results %}
-    <div class="container panel">
-      <h2>Shortlisted Candidates</h2>
-      <table>
-        <thead>
-          <tr><th>PDF #</th><th>Name</th><th>Email</th><th>Phone</th></tr>
-        </thead>
-        <tbody>
-          {% for r in results %}
-            <tr>
-              <td>{{ r.pdf_number }}</td>
-              <td>{{ r.name }}</td>
-              <td>{{ r.email }}</td>
-              <td>{{ r.phone }}</td>
-            </tr>
-          {% endfor %}
-        </tbody>
-      </table>
+        </script>
+      </form>
     </div>
-  {% endif %}
+
+    {% if results %}
+      <div class="panel results-panel">
+        <h2>🏆 Shortlisted Candidates</h2>
+        <div class="table-container">
+          <table>
+            <thead>
+              <tr>
+                <th>Rank</th>
+                <th>Name</th>
+                <th>Job Match</th>
+                <th>Match Score</th>
+                <th>Email</th>
+              </tr>
+            </thead>
+            <tbody>
+              {% for r in results %}
+                <tr>
+                  <td>#{{ loop.index }}</td>
+                  <td><strong>{{ r.name }}</strong></td>
+                  <td>{{ r.job_match }}</td>
+                  <td><span class="score-badge">{{ r.score }}%</span></td>
+                  <td>{{ r.email }}</td>
+                </tr>
+              {% endfor %}
+            </tbody>
+          </table>
+        </div>
+      </div>
+    {% endif %}
+  </div>
 </body>
 </html>

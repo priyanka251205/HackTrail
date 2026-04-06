@@ -65,7 +65,7 @@ def shortlist():
 
         # ✅ Send emails to selected candidates
         # my passkey name = HackTrail , passkey = "rmft fmil xtld ohwl"
-        scheduler = SchedulerAgent("YOUR_EMAIL_ID", "YOUR_APP_PASSWORD")
+        scheduler = SchedulerAgent("priyaganjawala2512@gmail.com", "rzrmhdjvzxaskfkn")
         for r in results:
             scheduler.schedule_interview(
                 to_email=r["email"],
